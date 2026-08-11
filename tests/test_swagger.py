@@ -14,6 +14,10 @@ class TestSwaggerDocs(unittest.TestCase):
         data = response.get_json()
         self.assertIn('/sum', data['paths'])
         self.assertIn('/members/', data['paths'])
+        self.assertIn('/mechanics/', data['paths'])
+        self.assertIn('/customers/', data['paths'])
+        self.assertIn('/service-tickets/', data['paths'])
+        self.assertIn('/inventory/', data['paths'])
 
 
 if __name__ == '__main__':

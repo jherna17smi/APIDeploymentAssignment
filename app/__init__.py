@@ -4,6 +4,10 @@ from flask import Flask, jsonify, request
 from flask_swagger import swagger
 from flask_swagger_ui import get_swaggerui_blueprint
 
+from .blueprints.customers import customers_bp
+from .blueprints.inventory import inventory_bp
+from .blueprints.mechanics import mechanics_bp
+from .blueprints.service_tickets import service_tickets_bp
 from .models import Member, db
 
 
@@ -52,6 +56,10 @@ def create_app(config_name=None):
         config={"app_name": "BasicofTTD API"},
     )
     app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
+    app.register_blueprint(mechanics_bp)
+    app.register_blueprint(customers_bp)
+    app.register_blueprint(service_tickets_bp)
+    app.register_blueprint(inventory_bp)
 
     @app.route("/swagger.json")
     def swagger_spec():
