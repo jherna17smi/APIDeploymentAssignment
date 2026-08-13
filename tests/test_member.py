@@ -1,11 +1,13 @@
 import unittest
 
 from app import app
+from app.models import db
 
 
 class TestMember(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
+        db.drop_all()
 
     def test_create_member(self):
         member_payload = {

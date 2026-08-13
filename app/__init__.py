@@ -26,6 +26,13 @@ SWAGGER_TEMPLATE = {
         "description": "API documentation for the BasicofTTD sample project.",
     },
     "schemes": ["http"],
+  "securityDefinitions": {
+    "ApiKeyAuth": {
+      "type": "apiKey",
+      "name": "X-API-Key",
+      "in": "header",
+    }
+  },
 }
 
 
@@ -49,6 +56,7 @@ def create_app(config_name=None):
         app.config.from_object(config_name)
 
     app.config.setdefault("TESTING", True)
+    app.config.setdefault("API_KEY", "teacher-demo-key")
 
     swagger_blueprint = get_swaggerui_blueprint(
         SWAGGER_URL,

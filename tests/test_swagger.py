@@ -15,9 +15,15 @@ class TestSwaggerDocs(unittest.TestCase):
         self.assertIn('/sum', data['paths'])
         self.assertIn('/members/', data['paths'])
         self.assertIn('/mechanics/', data['paths'])
+        self.assertIn('/mechanics/{mechanic_id}', data['paths'])
         self.assertIn('/customers/', data['paths'])
+        self.assertIn('/customers/{customer_id}', data['paths'])
         self.assertIn('/service-tickets/', data['paths'])
+        self.assertIn('/service-tickets/{ticket_id}', data['paths'])
         self.assertIn('/inventory/', data['paths'])
+        self.assertIn('/inventory/{item_id}', data['paths'])
+        self.assertIn('securityDefinitions', data)
+        self.assertIn('ApiKeyAuth', data['securityDefinitions'])
 
 
 if __name__ == '__main__':
