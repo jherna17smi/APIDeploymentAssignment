@@ -14,5 +14,8 @@ env/
 .coverage
 htmlcov/
 
+# Local environment files
+.env
+
 # Local editor settings
 .vscode/

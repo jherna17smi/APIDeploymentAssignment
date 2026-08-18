@@ -1,9 +1,11 @@
+import os
 from importlib import import_module
 
 from flask import Flask, jsonify, request
 from flask_swagger import swagger
 from flask_swagger_ui import get_swaggerui_blueprint
 
+from config import TestingConfig
 from .blueprints.customers import customers_bp
 from .blueprints.inventory import inventory_bp
 from .blueprints.mechanics import mechanics_bp
@@ -11,29 +13,8 @@ from .blueprints.service_tickets import service_tickets_bp
 from .models import Member, db
 
 
-class TestingConfig:
-    DEBUG = True
-    TESTING = True
-
-
 SWAGGER_URL = "/apidocs"
 SWAGGER_JSON_URL = "/swagger.json"
-SWAGGER_TEMPLATE = {
-    "swagger": "2.0",
-    "info": {
-        "title": "BasicofTTD API",
-        "version": "1.0.0",
-        "description": "API documentation for the BasicofTTD sample project.",
-    },
-    "schemes": ["http"],
-  "securityDefinitions": {
-    "ApiKeyAuth": {
-      "type": "apiKey",
-      "name": "X-API-Key",
-      "in": "header",
-    }
-  },
-}
 
 
 def create_app(config_name=None):
@@ -56,7 +37,10 @@ def create_app(config_name=None):
         app.config.from_object(config_name)
 
     app.config.setdefault("TESTING", True)
-    app.config.setdefault("API_KEY", "teacher-demo-key")
+    app.config.setdefault("API_KEY", os.getenv("API_KEY", "teacher-demo-key"))
+    app.config.setdefault("SECRET_KEY", os.getenv("SECRET_KEY", "dev-secret-key"))
+    app.config.setdefault("APP_HOST", os.getenv("APP_HOST", "127.0.0.1:5000"))
+    app.config.setdefault("SWAGGER_SCHEMES", ["http"])
 
     swagger_blueprint = get_swaggerui_blueprint(
         SWAGGER_URL,
@@ -69,9 +53,27 @@ def create_app(config_name=None):
     app.register_blueprint(service_tickets_bp)
     app.register_blueprint(inventory_bp)
 
+    swagger_template = {
+        "swagger": "2.0",
+        "host": app.config["APP_HOST"],
+        "info": {
+            "title": "BasicofTTD API",
+            "version": "1.0.0",
+            "description": "API documentation for the BasicofTTD sample project.",
+        },
+        "schemes": app.config["SWAGGER_SCHEMES"],
+        "securityDefinitions": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "name": "X-API-Key",
+                "in": "header",
+            }
+        },
+    }
+
     @app.route("/swagger.json")
     def swagger_spec():
-        return jsonify(swagger(app, template=SWAGGER_TEMPLATE))
+        return jsonify(swagger(app, template=swagger_template))
 
     @app.route("/sum", methods=["POST"])
     def sum_route():
@@ -203,4 +205,4 @@ def create_app(config_name=None):
     return app
 
 
-app = create_app("TestingConfig")
+app = create_app(TestingConfig)
